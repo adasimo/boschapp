@@ -1,0 +1,130 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="headerfiles">
+<meta charset="UTF-8" />
+
+<link rel="stylesheet" th:href="@{/bootstrap.min.css}">
+<link rel="stylesheet" th:href="@{/fontawesome.css}">
+<link rel="stylesheet" th:href="@{/fontawesome.min.css}">
+<link rel="stylesheet" th:href="@{/all.css}">
+
+<script th:src="@{/jquery-3.6.0.min.js}"></script>
+<script th:src="@{/bootstrap.min.js}"></script>
+
+</head>
+<body>
+	<div th:replace="feladat1/fragments/header.html :: header(true, true)"></div>
+	
+	<div class="container mx-auto">
+	    <div class="row mx-auto">
+	        <div class="col-lg-10 my-3 mx-auto">
+	            <table id="serviceTable" class="table table-bordered mx-auto w-100 text-center">
+	                <thead>
+	                <tr>
+	                    <th class="bg-light" th:text="#{feladat1.list.owner}"></th>
+	                    <th class="bg-light" th:text="#{feladat1.list.car}"></th>
+	                    <th class="bg-light" th:text="#{feladat1.list.guaranteed}"></th>
+	                    <th class="bg-light" th:text="#{feladat1.list.age}"></th>
+	                    <th class="bg-light" th:text="#{feladat1.list.service-start}"></th>
+	                    <th class="bg-light" th:text="#{feladat1.list.service-del}"></th>
+	                </tr>
+	                </thead>
+	                <tbody>
+	                <tr th:each="s : ${activeServices.page.content}">
+	                    <td th:text="${s.owner}"></td>
+	                    <td th:text="${s.car}"></td>
+	                    <td>
+	                    <span th:if="${s.guaranteed}" th:text="#{value.guaranteed}"></span>
+	                    <span th:if="${!s.guaranteed}" th:text="#{value.not-guaranteed}"></span>
+	                    </td>
+	                    <td th:text="${s.age}"></td>
+	                    <td th:text="${s.serviceStart}"></td>
+	                    <td>
+	                    <input type="hidden" th:value="${s.id}" class="del-id">
+	                    <button type="button" class="btn btn-danger del-btn" th:text="#{btn.delete}"></button>
+	                    
+	                    </td>
+	                </tr>
+	                </tbody>
+	            </table>
+				
+	            <nav aria-label="Page navigation" class="paging mx-auto">
+	                
+	                <ul class="pagination mx-auto d-flex justify-content-center">
+	                    <li class="page-item" th:classappend="${!activeServices.paging.isPrevEnabled()? 'disabled' : ''}">
+	                        <a class="page-link" th:href="@{'/list/?pageNumber=' + ${activeServices.paging.pageNumber - 1}}"
+	                           tabindex="-1" th:text="#{link.prev}"></a>
+	                    </li>
+	                    <th:block th:each="item : ${activeServices.paging.getItems()}">
+	                        <li class="page-item" th:classappend="${item.index == activeServices.paging.pageNumber? 'active' : ''}"
+	                            th:if="${item.pageItemType.name() == 'PAGE'}">
+	                            <a class="page-link" th:href="@{'/list/?pageNumber=' + ${item.index}}"
+	                               th:text="${item.index}"></a>
+	                        </li>
+	                        <li class="page-item disabled" th:if="${item.pageItemType.name() == 'DOTS'}">
+	                            <a class="page-link" href="#" th:text="#{link.dots}"></a>
+	                        </li>
+	                    </th:block>
+	                    <li class="page-item" th:classappend="${!activeServices.paging.isNextEnabled()? 'disabled' : ''}">
+	                        <a class="page-link" th:href="@{'/list/?pageNumber=' + ${activeServices.paging.pageNumber + 1}}" th:text="#{link.next}"></a>
+	                    </li>
+	                </ul>
+	            </nav>
+	        </div>
+	    </div>
+	</div>
+	<div class="d-flex justify-content-center">
+		<img th:src="@{/images/bosch_logo.png}">
+	</div>
+	
+	<script th:replace="feladat1/fragments/header.html :: headerScript"></script>
+	<script th:inline="javascript">
+	$(document).ready(function(){
+		
+		initDelButton();
+	});
+	
+	function initDelButton() {
+		
+		$('.del-btn').on('click', function() {
+			var id = $(this).closest('td').find('input').val();
+			var tr = $(this).closest('tr');
+			var as = [[${activeServices}]];
+			
+
+			$.ajax({
+				  url: [[@{/list/del/}]] + id + '?pageNumber=' + [[${activeServices.paging.pageNumber}]],
+				  type: 'DELETE',
+				    success: function(result) {
+				  		tr.remove();
+				  		var res = $(result);
+				  		if (res && res[0]) {
+				  			var guarVal;
+				  			var deleteText = [[#{btn.delete}]];
+				  			if (res[0].guaranteed == true || res[0].guaranteed == 'true') {
+				  				guarVal = [[#{value.guaranteed}]];
+				  			} else {
+				  				guarVal = [[#{value.not-guaranteed}]]
+				  			}
+				  			
+				  			$('#serviceTable > tbody:last-child')
+				  			.append('<tr><td>' + res[0].owner + '</td>' +
+				                    '<td>' + res[0].car + '</td>' +
+				                    '<td>' + guarVal + '</td>' +
+				                    '<td>' + res[0].age + '</td>' +
+				                    '<td>' + res[0].serviceStart + '</td>' +
+				                    '<td><input type="hidden" value="' + res[0].id + '" class="del-id"><button type="button" class="btn btn-danger del-btn">' + deleteText + '</button></td></tr>');
+				  			initDelButton();
+				  		}
+				  		
+				    }
+				});
+			
+
+		});
+	}
+	
+
+	</script>
+</body>
+</html>

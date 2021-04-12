@@ -1,0 +1,61 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="headerfiles">
+<meta charset="UTF-8" />
+
+<link rel="stylesheet" th:href="@{/bootstrap.min.css}">
+<script th:src="@{/jquery-3.6.0.min.js}"></script>
+<script th:src="@{/bootstrap.min.js}"></script>
+</head>
+<body>
+	<div th:fragment="header(feladat1, back)" class="mb-5">
+	   <nav class="navbar navbar-expand-lg navbar-static-top navbar-light bg-light">
+  			<div class="mx-2">
+  				<span class="navbar-brand" th:text="#{my.name}"></span>
+  			</div>
+
+			<div class="navbar-collapse d-flex justify-content-center">
+			     <ul th:if="${feladat1}" class="nav nav-pills" >
+				   <li class="nav-item">
+				     <a id="list" class="nav-link" th:text="#{feladat1.navbar.list}" th:href="@{/list/}"></a>
+				   </li>
+				   <li class="nav-item">
+				     <a id="add" class="nav-link" th:text="#{feladat1.navbar.add}" th:href="@{/add/}"></a>
+				   </li>
+				</ul>
+			</div>
+			<div th:if="${back}" class="text-center">
+				<a type="button" id="back-btn btn btn-danger text-center mr-2" th:href="@{/}"><span th:text="#{back.to.main}"></span></a>
+			</div>
+		</nav> 
+	</div>
+
+	<script th:fragment="headerScript" th:inline="javascript">
+		$(document).ready(function(){
+			
+			changeActivePill();
+			
+		});
+		
+		function changeActivePill() {
+			
+			var page = window.location.href;
+			var current = document.getElementsByClassName("active");
+			if (current && current.length > 0) {
+				current[0].className = current[0].className.replace(" active", "");	
+			}
+	        
+	        
+			if (page) {
+				if (page.includes('list')) {
+					$('#list').addClass('active');
+				} else if (page.includes('add')) {
+					$('#add').addClass('active');
+				}
+			}
+		}
+		
+
+	</script>
+</body>
+</html>

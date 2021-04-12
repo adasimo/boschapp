@@ -1,0 +1,38 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="headerfiles">
+<meta charset="UTF-8" />
+
+<link rel="stylesheet" th:href="@{/bootstrap.min.css}">
+<script th:src="@{/jquery-3.6.0.min.js}"></script>
+<script th:src="@{/bootstrap.min.js}"></script>
+
+</head>
+<body>
+	<div th:replace="feladat1/fragments/header.html :: header(false, true)"></div>
+
+	<div class="card mx-auto mb-5 w-75">
+		<div class="card-header text-center">
+		    <span th:text="#{feladat3.narration}" class="fw-bold"></span>
+		</div>
+		<div class="d-flex justify-content-center my-3">
+			<ul>
+				<li th:text="#{feladat3.sql-1}" class="my-3"></li>
+				<li th:text="#{feladat3.sql-2}" class="my-3"></li>
+				<li th:text="#{feladat3.sql-2.1}" class="my-3"></li>
+				<li th:text="#{feladat3.sql-3}" class="my-3"></li>
+				<li th:text="#{feladat3.sql-4}" class="my-3"></li>
+				<li th:text="#{feladat3.sql-5}" class="my-3"></li>
+				<li th:text="#{feladat3.sql-6}" class="my-3"></li>
+				<li th:text="#{feladat3.sql-7}" class="my-3"></li>
+			</ul>
+		</div>
+	</div>
+	<div class="d-flex justify-content-center">
+		<img th:src="@{/images/bosch_logo.png}">
+	</div>
+
+	<script th:replace="feladat1/fragments/header.html :: headerScript"></script>
+
+</body>
+</html>
